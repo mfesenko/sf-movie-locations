@@ -2,6 +2,6 @@
 port = 2222
 
 [db]
-dbHost = "localhost"
+host = "localhost"
 dbName = "sf-movie-locations"
-dbCollectionName = "movies"
+collectionName = "movies"
