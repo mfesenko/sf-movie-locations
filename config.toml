@@ -1,5 +1,6 @@
 [server]
 port = 2222
+staticContentPath = "static"
 
 [db]
 host = "localhost"
