@@ -1,4 +1,4 @@
-package controllers
+package server
 
 import (
 	"encoding/json"
@@ -47,6 +47,6 @@ func writeJsonResponse(writer *http.ResponseWriter, response interface{}) {
 		fmt.Fprintf(responseWriter, "%s", responseJson)
 	} else {
 		responseWriter.WriteHeader(500)
-		fmt.Fprintf(responseWriter, "Failed to serializer response data")
+		fmt.Fprintf(responseWriter, "Failed to serialize response data")
 	}
 }

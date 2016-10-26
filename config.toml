@@ -1,0 +1,7 @@
+[server]
+port = 2222
+
+[db]
+dbHost = "localhost"
+dbName = "sf-movie-locations"
+dbCollectionName = "movies"
