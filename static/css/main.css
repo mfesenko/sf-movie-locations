@@ -75,3 +75,17 @@ html, body {
     font-weight: normal;
     color: #3399FF;
 }
+
+.movie-message {
+    font-family: 'Open Sans';
+    font-size: 14px;
+    padding-top: 8px;
+}
+
+.movie-message .field-name {
+    color: #808080;
+}
+
+.movie-message .field-value {
+    font-weight: bold;
+}

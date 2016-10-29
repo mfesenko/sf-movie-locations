@@ -64,13 +64,17 @@ function createMarkersForMovie(movie) {
                 icon: '/static/images/marker.png'
             });
             marker.addListener('click', function () {
-                message = 'Movie: ' + movie.title + ' (' + movie.year + ')';
+                message = getInfoMessageForMovie(movie);
                 infowindow.setContent(message);
                 infowindow.open(map, marker);
             });
             markers.push(marker)
         });
     }
+}
+
+function getInfoMessageForMovie(movie) {
+    return $("#messageTemplate").tmpl(movie).html();
 }
 
 function reset() {

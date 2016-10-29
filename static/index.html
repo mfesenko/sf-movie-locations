@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="/static/css/main.css">
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="/static/js/jquery.autocomplete.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
     <script src="/static/js/main.js"></script>
 
     <script async defer
@@ -34,5 +35,27 @@
     </div>
     <div id="map" class="growing"></div>
 </div>
+<script id="messageTemplate" type="text/x-jQuery-tmpl">
+    <div>
+        <div class="movie-message">
+            <span class="field-name">Movie: </span>
+            <span class="field-value">${title}</span> <br/>
+            <span class="field-name">Year: </span>
+            <span class="field-value">${year}</span> <br/>
+            <span class="field-name">Director: </span>
+            <span class="field-value">${director}</span> <br/>
+            <span class="field-name">Starring:</span>
+            <span class="field-value">
+                {{if typeof(actors) == 'undefined'}}
+                    n/a
+                {{else}}
+                    {{each(index, actor) actors}}
+                    <br/>${actor}
+                    {{/each}}
+                {{/if}}
+            </span>
+        </div>
+    </div>
+</script>
 </body>
 </html>
