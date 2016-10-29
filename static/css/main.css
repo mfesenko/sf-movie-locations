@@ -1,4 +1,64 @@
-#map {
-    width: 100%;
-    height: 800px;
+html, body {
+    height: 100%;
+}
+
+.brand {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    font-size: 26px;
+    padding: 0px 12px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    padding-top: 48px;
+    padding-bottom: 12px;
+    background: #eee;
+    min-height: 100%;
+}
+
+.fixed {
+    background: #404040;
+    color: white;
+    font-size: 18px;
+    padding: 12px 12px 0;
+}
+
+.hidden {
+    display: none;
+}
+.growing {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+    min-width: 600px;
+}
+
+.filter {
+    width: 400px;
+}
+
+.autocomplete-suggestions {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #FFF;
+    overflow: auto;
+}
+
+.autocomplete-suggestion {
+    padding: 6px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.autocomplete-selected {
+    background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+    font-weight: normal;
+    color: #3399FF;
 }

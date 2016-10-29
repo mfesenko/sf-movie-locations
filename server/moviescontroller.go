@@ -33,7 +33,7 @@ func (mc MoviesController) GetMovieLocations(writer http.ResponseWriter, request
 }
 
 func (mc MoviesController) GetMovies(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	title := params.ByName("title")
+	title := request.URL.Query().Get("title")
 	movies := mc.datastore.FindMovies(title)
 	writeJsonResponse(&writer, movies)
 }
