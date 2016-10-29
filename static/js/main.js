@@ -60,7 +60,8 @@ function createMarkersForMovie(movie) {
             var marker = new google.maps.Marker({
                 position: location,
                 map: map,
-                title: movie.title
+                title: movie.title,
+                icon: '/static/images/marker.png'
             });
             marker.addListener('click', function () {
                 message = 'Movie: ' + movie.title + ' (' + movie.year + ')';
