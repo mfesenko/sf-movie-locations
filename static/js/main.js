@@ -14,57 +14,15 @@ function initMap() {
     infowindow = new google.maps.InfoWindow({
         content: ''
     });
-    addCustomControlsToMap(map);
     google.maps.event.addListenerOnce(map, 'idle', function () {
-        initAutocomplete();
+        initEventHandlers();
         loadAllMovieLocations();
     });
 }
 
-function addCustomControlsToMap(map) {
-    var filterControlDiv = buildFilterControlDiv();
-    filterControlDiv.index = 1;
-    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(filterControlDiv);
-}
-
-function buildFilterControlDiv() {
-    var filterControlDiv = document.createElement('div');
-    filterControlDiv.index = 1;
-    filterControlDiv.appendChild(buildInputGroupDiv());
-    return filterControlDiv;
-}
-
-function buildInputGroupDiv() {
-    var inputGroupDiv = document.createElement('div');
-    inputGroupDiv.className = 'filter input-group';
-    inputGroupDiv.appendChild(buildFilterInput());
-    inputGroupDiv.appendChild(buildInputGroupSpan());
-    return inputGroupDiv;
-}
-
-function buildFilterInput() {
-    var controlInput = document.createElement('input');
-    controlInput.type = "text";
-    controlInput.className = 'form-control';
-    controlInput.id = 'movie';
-    controlInput.placeholder = 'Filter by movie name...';
-    return controlInput;
-}
-
-function buildInputGroupSpan() {
-    var inputGroupSpan = document.createElement('span');
-    inputGroupSpan.className = 'input-group-btn';
-    inputGroupSpan.appendChild(buildResetButton());
-    return inputGroupSpan;
-}
-
-function buildResetButton() {
-    var resetButton = document.createElement('button');
-    resetButton.id = 'reset';
-    resetButton.innerText = 'Reset';
-    resetButton.className = 'btn btn-default';
-    resetButton.addEventListener('click', reset);
-    return resetButton;
+function initEventHandlers() {
+    initAutocomplete();
+    $('#reset').click(reset);
 }
 
 function initAutocomplete() {
