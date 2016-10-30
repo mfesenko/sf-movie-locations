@@ -48,6 +48,7 @@ function initAutocomplete() {
 }
 
 function onMovieLocationsLoaded(data) {
+    infowindow.close();
     markers.forEach(hideMarker);
     markers = [];
     locationToMovies = [];
