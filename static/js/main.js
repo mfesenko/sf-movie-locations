@@ -98,12 +98,6 @@ function filterMovieLocations(movieTitle) {
     );
 }
 
-function onMovieLocationLoaded(data) {
-    markers.forEach(hideMarker);
-    markers = [];
-    createMarkersForMovie(data);
-}
-
 function hideMarker(marker) {
     marker.setMap(null);
 }
