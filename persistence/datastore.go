@@ -21,52 +21,70 @@ func NewDataStore(dbHost string, dbName string, collectionName string) *DataStor
 	return &DataStore{session, dbName, collectionName}
 }
 
-func (ds DataStore) collection() *mgo.Collection {
-	return ds.session.DB(ds.dbName).C(ds.collectionName)
+func (ds DataStore) getSession() *mgo.Session {
+	return ds.session.Copy()
+}
+
+func (ds DataStore) collection(session *mgo.Session) *mgo.Collection {
+	return session.DB(ds.dbName).C(ds.collectionName)
 }
 
 func (ds DataStore) GetMovies(title string) []Movie {
+	session := ds.getSession()
+	defer session.Close()
+
 	var movies []Movie
 	query := bson.M{}
 	if title != "" {
 		query = ds.createTitleQuery(title)
 	}
-	ds.collection().Find(query).All(&movies)
+	ds.collection(session).Find(query).All(&movies)
 	return movies
 }
 
 func (ds DataStore) AddMovies(movies []Movie) {
+	session := ds.getSession()
+	defer session.Close()
+
 	entities := make([]interface{}, len(movies))
 	for index := range movies {
 		entities[index] = movies[index]
 		index++
 	}
-	err := ds.collection().Insert(entities...)
+	err := ds.collection(session).Insert(entities...)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func (ds DataStore) AddMovie(movie Movie) {
-	err := ds.collection().Insert(movie)
+	session := ds.getSession()
+	defer session.Close()
+	err := ds.collection(session).Insert(movie)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func (ds DataStore) Reset() {
-	ds.collection().DropCollection()
+	session := ds.getSession()
+	defer session.Close()
+
+	ds.collection(session).DropCollection()
 	index := mgo.Index{Key: []string{"title"}}
-	ds.collection().EnsureIndex(index)
+	ds.collection(session).EnsureIndex(index)
 }
 
 func (ds DataStore) FindMovies(title string) []Movie {
+	session := ds.getSession()
+	defer session.Close()
+
 	query := ds.createTitleQuery(title)
 	selector := bson.M{
 		"title": 1,
 	}
 	movies := make([]Movie, 0)
-	ds.collection().Find(query).Select(selector).All(&movies)
+	ds.collection(session).Find(query).Select(selector).All(&movies)
 	return movies
 }
 
