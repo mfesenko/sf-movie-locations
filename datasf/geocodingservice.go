@@ -46,7 +46,10 @@ func (gs GeocodingService) requestCoordinates(address string) *persistence.Locat
 		return nil
 	}
 	location := response[0].Geometry.Location
-	return &persistence.Location{location.Lat, location.Lng}
+	return &persistence.Location{
+		Latitude:  location.Lat,
+		Longitude: location.Lng,
+	}
 }
 
 func (gs GeocodingService) getPlaceId(address string) *string {

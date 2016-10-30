@@ -41,6 +41,7 @@ func (n Normalizer) Normalize(records []DataSFRecord) []persistence.Movie {
 			moviesMap[movieKey] = movie
 		}
 		if location != nil {
+			location.Description = record.Locations
 			movie.Locations = append(movie.Locations, *location)
 		} else {
 			log.Printf("Failed to parse location for movie %s - %s", record.Title, record.Locations)
