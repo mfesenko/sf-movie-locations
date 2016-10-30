@@ -20,16 +20,13 @@ func NewNormalizer(geocodingService *GeocodingService) *Normalizer {
 }
 
 func (n Normalizer) Normalize(records []DataSFRecord) ([]persistence.Movie, error) {
-	recordsCount := len(records)
 	moviesMap := make(map[string]*persistence.Movie)
 	var resultError error = nil
-	for i := 0; i < recordsCount; i++ {
-		record := records[i]
+	for _, record := range records {
 		if record.Locations == "" {
 			log.Printf("Skipping record for movie '%s' because location was empty", record.Title)
 			continue
 		}
-
 		movieKey := fmt.Sprintf("%s|%s", record.Title, record.Release_year)
 		movie := moviesMap[movieKey]
 		location, err := n.geocodingService.ConvertAddressToCoordinates(record.Locations + ", San Francisco, CA")
