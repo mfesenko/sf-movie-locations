@@ -27,7 +27,8 @@ func NewGeocodingService(apiKey string) (*GeocodingService, error) {
 func (gs *GeocodingService) ConvertAddressToCoordinates(address string) (persistence.Location, error) {
 	coordinates, ok := gs.coordinatesCache[address]
 	if ok == false {
-		coordinates, err := gs.requestCoordinates(address)
+		var err error
+		coordinates, err = gs.requestCoordinates(address)
 		if err != nil {
 			return persistence.Location{}, err
 		}
@@ -48,7 +49,7 @@ func (gs GeocodingService) requestCoordinates(address string) (persistence.Locat
 
 	if err != nil {
 		return persistence.Location{},
-                        fmt.Errorf("Failed to get geo coordinates for address '%s' with error: %s", address, err)
+			fmt.Errorf("Failed to get geo coordinates for address '%s' with error: %s", address, err)
 	}
 	location := response[0].Geometry.Location
 	return persistence.Location{
