@@ -1,0 +1,10 @@
+[dataloader]
+batchSize = 1000
+
+[db]
+host = "localhost:27017"
+dbName = "sf-movie-locations"
+collectionName = "movies"
+username = "dataloader"
+password = "qwerty23"
+timeout = 60

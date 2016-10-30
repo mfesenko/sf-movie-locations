@@ -8,22 +8,29 @@ import (
 	"os"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/mfesenko/sf-movie-locations/config"
 	"github.com/mfesenko/sf-movie-locations/persistence"
 )
 
 type Server struct {
-	config Config
+	config config.Config
 }
 
-func NewServer(configFilePath string) *Server {
-	config := LoadConfigFile(configFilePath)
-	return &Server{config}
+func NewServer(configFilePath string) (*Server, error) {
+	config, err := config.LoadConfigFile(configFilePath)
+	if err != nil {
+		return nil, err
+	}
+	return &Server{config}, nil
 }
 
 func (s Server) Serve() {
 	router := httprouter.New()
 	log.Print("Initializing data store...")
-	dataStore := persistence.NewDataStore(s.config.Db.Host, s.config.Db.DbName, s.config.Db.CollectionName)
+	dataStore, err := persistence.NewDataStore(s.config.Db)
+	if err != nil {
+		log.Fatal(err)
+	}
 	moviesController := NewMoviesController(dataStore)
 	router.GET("/api/movieLocations", moviesController.GetAllMovieLocations)
 	router.GET("/api/movies", moviesController.GetMovies)

@@ -4,6 +4,9 @@ import (
 	"log"
 	"os"
 
+	"flag"
+
+	"github.com/mfesenko/sf-movie-locations/config"
 	"github.com/mfesenko/sf-movie-locations/datasf"
 	"github.com/mfesenko/sf-movie-locations/persistence"
 )
@@ -11,7 +14,15 @@ import (
 var API_KEY = os.Getenv("GOOGLE_MAPS_API_KEY")
 
 func main() {
-	datastore := persistence.NewDataStore("localhost", "sf-movie-locations", "movies")
+	configFilePath := flag.String("config", "dataloader-config.toml", "path to config file")
+	config, err := config.LoadConfigFile(*configFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	datastore, err := persistence.NewDataStore(config.Db)
+	if err != nil {
+		log.Fatal(err)
+	}
 	geocodingService, err := datasf.NewGeocodingService(API_KEY)
 	if err != nil {
 		log.Fatal(err)
@@ -19,7 +30,7 @@ func main() {
 	dataSFService := datasf.NewDataSFService()
 	normalizer := datasf.NewNormalizer(geocodingService)
 
-	limit := 1000
+	limit := config.Dataloader.BatchSize
 	offset := 0
 
 	movies := make([]persistence.Movie, 0)

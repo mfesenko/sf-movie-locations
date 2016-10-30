@@ -1,0 +1,11 @@
+[server]
+port = 2222
+staticContentPath = "static"
+
+[db]
+host = "localhost:27017"
+dbName = "sf-movie-locations"
+collectionName = "movies"
+username = "webapp"
+password = "asdf88"
+timeout = 60

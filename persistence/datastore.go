@@ -3,6 +3,10 @@ package persistence
 import (
 	"log"
 
+	"fmt"
+	"time"
+
+	"github.com/mfesenko/sf-movie-locations/config"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -13,12 +17,19 @@ type DataStore struct {
 	collectionName string
 }
 
-func NewDataStore(dbHost string, dbName string, collectionName string) *DataStore {
-	session, err := mgo.Dial("mongodb://" + dbHost)
-	if err != nil {
-		log.Fatal("Connection to database failed: %s", err)
+func NewDataStore(conf config.DbConfig) (*DataStore, error) {
+	dialInfo := mgo.DialInfo{
+		Addrs:    []string{conf.Host},
+		Database: conf.DbName,
+		Username: conf.Username,
+		Password: conf.Password,
+		Timeout:  time.Duration(conf.Timeout) * time.Second,
 	}
-	return &DataStore{session, dbName, collectionName}
+	session, err := mgo.DialWithInfo(&dialInfo)
+	if err != nil {
+		return nil, fmt.Errorf("Connection to database failed: %s", err)
+	}
+	return &DataStore{session, conf.DbName, conf.CollectionName}, nil
 }
 
 func (ds DataStore) getSession() *mgo.Session {
