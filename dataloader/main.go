@@ -24,7 +24,10 @@ func main() {
 	continueRetrieve := true
 	for continueRetrieve {
 		log.Printf("Retrieving next %d record(s) starting from %d", limit, offset)
-		records := dataSFService.RetrieveRecords(offset, limit)
+		records, err := dataSFService.RetrieveRecords(offset, limit)
+		if err != nil {
+			log.Fatal(err)
+		}
 		retrievedRecordsCount := len(records)
 		recordsCount += retrievedRecordsCount
 		continueRetrieve = retrievedRecordsCount > 0

@@ -2,9 +2,9 @@ package datasf
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -27,20 +27,20 @@ func NewDataSFService() *DataSFService {
 	return &DataSFService{}
 }
 
-func (s DataSFService) RetrieveRecords(offset int, limit int) []DataSFRecord {
+func (s DataSFService) RetrieveRecords(offset int, limit int) ([]DataSFRecord, error) {
 	url := fmt.Sprintf(DATASF_URL_TEMPLATE, offset, limit)
 	response, err := http.Get(url)
 	if err != nil || response.StatusCode != 200 {
-		log.Fatal("Request to data.sfgov.org was not successful")
+		return []DataSFRecord{}, errors.New("datasf: Request to data.sfgov.org was not successful")
 	}
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal("Failed to read response content")
+		return []DataSFRecord{}, errors.New("datasf: Failed to read response content")
 	}
 	var records []DataSFRecord
 	err = json.Unmarshal(body, &records)
 	if err != nil {
-		log.Fatal("Failed to deserialize records from json response")
+		return []DataSFRecord{}, errors.New("datasf: Failed to deserialize records from json response")
 	}
-	return records
+	return records, nil
 }
