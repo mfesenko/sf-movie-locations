@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"os"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/mfesenko/sf-movie-locations/persistence"
 )
@@ -24,13 +26,26 @@ func (s Server) Serve() {
 	dataStore := persistence.NewDataStore(s.config.Db.Host, s.config.Db.DbName, s.config.Db.CollectionName)
 	moviesController := NewMoviesController(dataStore)
 	router.GET("/api/movieLocations", moviesController.GetAllMovieLocations)
-	router.GET("/api/movies/", moviesController.GetMovies)
-	router.ServeFiles("/static/*filepath", http.Dir(s.config.Server.StaticContentPath))
+	router.GET("/api/movies", moviesController.GetMovies)
+	router.GET("/static/*filepath", s.serveStatics)
 	s.serveFile("/", "/index.html", router)
 	s.serveFile("/favicon.ico", "/images/favicon.ico", router)
 	log.Printf("Start listening at port %d...", s.config.Server.Port)
 	address := fmt.Sprintf(":%d", s.config.Server.Port)
 	http.ListenAndServe(address, router)
+}
+
+func (s Server) serveStatics(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	filepath := params.ByName("filepath")
+	if filepath != "/index.html" {
+		fileSystemPath := s.config.Server.StaticContentPath + filepath
+		file, err := os.Stat(fileSystemPath)
+		if err == nil && !file.IsDir() {
+			http.ServeFile(writer, request, fileSystemPath)
+			return
+		}
+	}
+	http.NotFound(writer, request)
 }
 
 func (s Server) serveFile(path string, filePath string, router *httprouter.Router) {
