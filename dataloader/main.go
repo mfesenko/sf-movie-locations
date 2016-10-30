@@ -37,7 +37,9 @@ func main() {
 		offset += limit
 
 		normalizedMovies, err := normalizer.Normalize(records)
-		movies = append(movies, normalizedMovies...)
+		if len(normalizedMovies) > 0 {
+			movies = append(movies, normalizedMovies...)
+		}
 		if err != nil {
 			log.Print(err)
 			continueRetrieve = false
@@ -47,6 +49,8 @@ func main() {
 	log.Printf("Read %d record(s) from datasf", recordsCount)
 	log.Printf("Saving %d movie record(s) to db", len(movies))
 
-	datastore.Reset()
-	datastore.AddMovies(movies)
+	if len(movies) > 0 {
+		datastore.Reset()
+		datastore.AddMovies(movies)
+	}
 }
