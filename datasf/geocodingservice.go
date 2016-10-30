@@ -1,7 +1,7 @@
 package datasf
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/mfesenko/sf-movie-locations/persistence"
 	"golang.org/x/net/context"
@@ -10,55 +10,60 @@ import (
 
 type GeocodingService struct {
 	client           *maps.Client
-	coordinatesCache map[string]*persistence.Location
+	coordinatesCache map[string]persistence.Location
 }
 
-func NewGeocodingService(apiKey string) *GeocodingService {
+func NewGeocodingService(apiKey string) (*GeocodingService, error) {
 	client, err := maps.NewClient(maps.WithAPIKey(apiKey))
 	if err != nil {
-		log.Fatalf("Failed to create Google Maps client: %s", err)
+		return nil, fmt.Errorf("datasf: Failed to create Google Maps client: %s", err)
 	}
-	return &GeocodingService{client: client, coordinatesCache: make(map[string]*persistence.Location)}
+	return &GeocodingService{
+		client:           client,
+		coordinatesCache: make(map[string]persistence.Location),
+	}, nil
 }
 
-func (gs *GeocodingService) ConvertAddressToCoordinates(address string) *persistence.Location {
-	coordinates := gs.coordinatesCache[address]
-	if coordinates == nil {
-		coordinates = gs.requestCoordinates(address)
+func (gs *GeocodingService) ConvertAddressToCoordinates(address string) (persistence.Location, error) {
+	coordinates, ok := gs.coordinatesCache[address]
+	if ok == false {
+		coordinates, err := gs.requestCoordinates(address)
+		if err != nil {
+			return persistence.Location{}, err
+		}
 		gs.coordinatesCache[address] = coordinates
 	}
-	return coordinates
+	return coordinates, nil
 }
 
-func (gs GeocodingService) requestCoordinates(address string) *persistence.Location {
-	placeId := gs.getPlaceId(address)
+func (gs GeocodingService) requestCoordinates(address string) (persistence.Location, error) {
+	placeId, err := gs.getPlaceId(address)
 	var response []maps.GeocodingResult
-	var err error
-	if placeId == nil {
+	if err != nil {
 		response, err = gs.getAddressCoordinates(address)
 
 	} else {
-		response, err = gs.getPlaceCoordinates(*placeId)
+		response, err = gs.getPlaceCoordinates(placeId)
 	}
 
 	if err != nil {
-		log.Printf("Failed to get geo coordinates for address '%s' with error: %s", address, err)
-		return nil
+		return persistence.Location{},
+                        fmt.Errorf("Failed to get geo coordinates for address '%s' with error: %s", address, err)
 	}
 	location := response[0].Geometry.Location
-	return &persistence.Location{
+	return persistence.Location{
 		Latitude:  location.Lat,
 		Longitude: location.Lng,
-	}
+	}, nil
 }
 
-func (gs GeocodingService) getPlaceId(address string) *string {
+func (gs GeocodingService) getPlaceId(address string) (string, error) {
 	request := &maps.PlaceAutocompleteRequest{Input: address}
 	response, err := gs.client.PlaceAutocomplete(context.Background(), request)
 	if err != nil {
-		return nil
+		return "", err
 	}
-	return &response.Predictions[0].PlaceID
+	return response.Predictions[0].PlaceID, nil
 }
 
 func (gs GeocodingService) getPlaceCoordinates(placeId string) ([]maps.GeocodingResult, error) {

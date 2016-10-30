@@ -12,7 +12,10 @@ var API_KEY = os.Getenv("GOOGLE_MAPS_API_KEY")
 
 func main() {
 	datastore := persistence.NewDataStore("localhost", "sf-movie-locations", "movies")
-	geocodingService := datasf.NewGeocodingService(API_KEY)
+	geocodingService, err := datasf.NewGeocodingService(API_KEY)
+	if err != nil {
+		log.Fatal(err)
+	}
 	dataSFService := datasf.NewDataSFService()
 	normalizer := datasf.NewNormalizer(geocodingService)
 
@@ -33,7 +36,12 @@ func main() {
 		continueRetrieve = retrievedRecordsCount > 0
 		offset += limit
 
-		movies = append(movies, normalizer.Normalize(records)...)
+		normalizedMovies, err := normalizer.Normalize(records)
+		movies = append(movies, normalizedMovies...)
+		if err != nil {
+			log.Print(err)
+			continueRetrieve = false
+		}
 	}
 
 	log.Printf("Read %d record(s) from datasf", recordsCount)
