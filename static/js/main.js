@@ -1,6 +1,7 @@
 var markers = [];
 var infowindow;
 var map;
+var locationToMovies = {};
 
 function initMap() {
     var mapCenter = {lat: 37.7832508, lng: -122.450038};
@@ -11,9 +12,7 @@ function initMap() {
         mapTypeControl: false
     });
 
-    infowindow = new google.maps.InfoWindow({
-        content: ''
-    });
+    infowindow = new(CustomInfoWindow())();
     google.maps.event.addListenerOnce(map, 'idle', function () {
         initEventHandlers();
         loadAllMovieLocations();
@@ -51,6 +50,7 @@ function initAutocomplete() {
 function onMovieLocationsLoaded(data) {
     markers.forEach(hideMarker);
     markers = [];
+    locationToMovies = [];
     if (data != null) {
         data.forEach(createMarkersForMovie);
     }
@@ -59,24 +59,46 @@ function onMovieLocationsLoaded(data) {
 function createMarkersForMovie(movie) {
     if (movie.locations) {
         movie.locations.forEach(function (location) {
-            var marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                title: movie.title,
-                icon: '/static/images/marker.png'
-            });
-            marker.addListener('click', function () {
-                message = getInfoMessageForMovie(movie);
-                infowindow.setContent(message);
-                infowindow.open(map, marker);
-            });
-            markers.push(marker)
+            var locationMovies = locationToMovies[location.description];
+            if (typeof(locationMovies) == 'undefined') {
+                locationMovies = [movie];
+                locationToMovies[location.description] = locationMovies;
+
+                var marker = createMarker(location);
+                marker.addListener('click', function () {
+                    var msgData = {
+                        movies: locationToMovies[location.description],
+                        location: location
+                    }
+                    infowindow.setContent(getInfoMessageForMovie(msgData));
+                    infowindow.open(map, marker);
+                });
+                markers.push(marker)
+            } else {
+                locationMovies.push(movie);
+            }
         });
     }
 }
 
-function getInfoMessageForMovie(movie) {
-    return $("#messageTemplate").tmpl(movie).html();
+function createMarker(location) {
+    return new google.maps.Marker({
+        position: {
+            lat: location.lat,
+            lng: location.lng
+        },
+        map: map,
+        title: movie.title,
+        icon: {
+            url: '/static/images/marker.png',
+            size: new google.maps.Size(32, 32),
+            scaledSize:new google.maps.Size(32, 32)
+        }
+    });
+}
+
+function getInfoMessageForMovie(msgData) {
+    return $("#messageTemplate").tmpl(msgData).html();
 }
 
 function filter() {

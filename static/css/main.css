@@ -76,16 +76,26 @@ html, body {
     color: #3399FF;
 }
 
-.movie-message {
+.map-info-window {
+    max-width: 350px;
+    max-height: 300px;
+    overflow: hidden;
+    position: absolute;
     font-family: 'Open Sans';
-    font-size: 14px;
-    padding-top: 8px;
+    font-size: 12px;
 }
 
-.movie-message .field-name {
-    color: #808080;
-}
-
-.movie-message .field-value {
+.map-info-window .panel-heading {
     font-weight: bold;
+}
+
+.map-info-window .movies-table{
+    max-height: 260px;
+    overflow-y: auto;
+}
+.map-info-window .map-info-close {
+    float: right;
+    cursor: pointer;
+    margin-right: -5px;
+    margin-left: 5px;
 }

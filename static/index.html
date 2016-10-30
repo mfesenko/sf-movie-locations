@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
     <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
     <script src="/static/js/main.js"></script>
+    <script src="/static/js/customwindow.js"></script>
 
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH0AVIkMM94u3hMMUPjwbjerg9P-AxciQ&signed_in=false&callback=initMap"></script>
@@ -37,21 +38,35 @@
 </div>
 <script id="messageTemplate" type="text/x-jQuery-tmpl">
     <div>
-        <div class="movie-message">
-            <span class="field-name">Movie: </span>
-            <span class="field-value">${title}</span> <br/>
-            <span class="field-name">Year: </span>
-            <span class="field-value">${year}</span> <br/>
-            <span class="field-name">Director: </span>
-            <span class="field-value">${director}</span> <br/>
-            <span class="field-name">Starring:</span>
-            <span class="field-value">
-                {{if typeof(actors) == 'undefined'}}
-                    n/a
-                {{else}}
-                    ${joinWithComma(actors)}
-                {{/if}}
-            </span>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="map-info-close">X</div>
+                Movies for location '${location.description}'
+            </div>
+            <div class="movies-table">
+                <table class="table">
+                    <tr>
+                        <th>Title</th>
+                        <th>Year</th>
+                        <th>Director</th>
+                        <th>Starring</th>
+                    </tr>
+                    {{each(index, movie) movies}}
+                    <tr>
+                        <td>${movie.title}</td>
+                        <td>${movie.year}</td>
+                        <td>${movie.director}</td>
+                        <td>
+                            {{if typeof(movie.actors) == 'undefined'}}
+                                n/a
+                            {{else}}
+                                ${joinWithComma(movie.actors)}
+                            {{/if}}
+                        </td>
+                    </tr>
+                    {{/each}}
+                </table>
+            </div>
         </div>
     </div>
 </script>
