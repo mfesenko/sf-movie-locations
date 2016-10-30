@@ -107,3 +107,7 @@ function onMovieLocationLoaded(data) {
 function hideMarker(marker) {
     marker.setMap(null);
 }
+
+function joinWithComma(values) {
+    return values.join(', ');
+}

@@ -49,9 +49,7 @@
                 {{if typeof(actors) == 'undefined'}}
                     n/a
                 {{else}}
-                    {{each(index, actor) actors}}
-                    <br/>${actor}
-                    {{/each}}
+                    ${joinWithComma(actors)}
                 {{/if}}
             </span>
         </div>
