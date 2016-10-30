@@ -18,18 +18,9 @@ func NewMoviesController(datastore *persistence.DataStore) *MoviesController {
 }
 
 func (mc MoviesController) GetAllMovieLocations(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	movies := mc.datastore.GetAllMovies()
+	title := request.URL.Query().Get("title")
+	movies := mc.datastore.GetMovies(title)
 	writeJsonResponse(&writer, movies)
-}
-
-func (mc MoviesController) GetMovieLocations(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	id := params.ByName("id")
-	movie := mc.datastore.GetMovie(id)
-	if movie == nil {
-		writer.WriteHeader(404)
-	} else {
-		writeJsonResponse(&writer, movie)
-	}
 }
 
 func (mc MoviesController) GetMovies(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {

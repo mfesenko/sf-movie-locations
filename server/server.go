@@ -24,7 +24,6 @@ func (s Server) Serve() {
 	dataStore := persistence.NewDataStore(s.config.Db.Host, s.config.Db.DbName, s.config.Db.CollectionName)
 	moviesController := NewMoviesController(dataStore)
 	router.GET("/api/movieLocations", moviesController.GetAllMovieLocations)
-	router.GET("/api/movieLocations/:id", moviesController.GetMovieLocations)
 	router.GET("/api/movies/", moviesController.GetMovies)
 	router.ServeFiles("/static/*filepath", http.Dir(s.config.Server.StaticContentPath))
 	s.serveFile("/", "/index.html", router)

@@ -22,7 +22,12 @@ function initMap() {
 
 function initEventHandlers() {
     initAutocomplete();
-    $('#reset').click(reset);
+    $('#filter').click(filter);
+    $('#movie').keyup(function (e) {
+        if (e.keyCode === 13) {
+            filter();
+        }
+    })
 }
 
 function initAutocomplete() {
@@ -34,14 +39,11 @@ function initAutocomplete() {
             return {
                 suggestions: $.map(movies, function (movie) {
                     return {
-                        value: movie.title + " (" + movie.year + ")",
+                        value: movie.title,
                         data: movie.id
                     };
                 })
             };
-        },
-        onSelect: function (suggestion) {
-            filterMovieLocations(suggestion.data);
         }
     });
 }
@@ -77,10 +79,9 @@ function getInfoMessageForMovie(movie) {
     return $("#messageTemplate").tmpl(movie).html();
 }
 
-function reset() {
-    $('#reset').blur();
-    $('#movie').val('');
-    loadAllMovieLocations();
+function filter() {
+    $('#filter').blur();
+    filterMovieLocations($('#movie').val());
 }
 
 function loadAllMovieLocations() {
@@ -90,9 +91,9 @@ function loadAllMovieLocations() {
     );
 }
 
-function filterMovieLocations(movieId) {
-    $.get('/api/movieLocations/' + movieId,
-        onMovieLocationLoaded,
+function filterMovieLocations(movieTitle) {
+    $.get('/api/movieLocations?title=' + movieTitle,
+        onMovieLocationsLoaded,
         'json'
     );
 }

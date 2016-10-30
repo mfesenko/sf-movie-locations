@@ -25,21 +25,14 @@ func (ds DataStore) collection() *mgo.Collection {
 	return ds.session.DB(ds.dbName).C(ds.collectionName)
 }
 
-func (ds DataStore) GetAllMovies() []Movie {
+func (ds DataStore) GetMovies(title string) []Movie {
 	var movies []Movie
-	ds.collection().Find(bson.M{}).All(&movies)
-	return movies
-}
-
-func (ds DataStore) GetMovie(id string) *Movie {
-	if bson.IsObjectIdHex(id) {
-		var movie Movie
-		err := ds.collection().FindId(bson.ObjectIdHex(id)).One(&movie)
-		if err == nil {
-			return &movie
-		}
+	query := bson.M{}
+	if title != "" {
+		query = ds.createTitleQuery(title)
 	}
-	return nil
+	ds.collection().Find(query).All(&movies)
+	return movies
 }
 
 func (ds DataStore) AddMovies(movies []Movie) {
@@ -68,14 +61,17 @@ func (ds DataStore) Reset() {
 }
 
 func (ds DataStore) FindMovies(title string) []Movie {
-	query := bson.M{
-		"title": bson.RegEx{title, "i"},
-	}
+	query := ds.createTitleQuery(title)
 	selector := bson.M{
 		"title": 1,
-		"year":  1,
 	}
 	movies := make([]Movie, 0)
 	ds.collection().Find(query).Select(selector).All(&movies)
 	return movies
+}
+
+func (ds DataStore) createTitleQuery(title string) bson.M {
+	return bson.M{
+		"title": bson.RegEx{title, "i"},
+	}
 }
