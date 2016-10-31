@@ -43,6 +43,9 @@ function initAutocomplete() {
                     };
                 })
             };
+        },
+        onSelect: function () {
+            filter();
         }
     });
 }
