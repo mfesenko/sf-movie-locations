@@ -8,6 +8,7 @@ import (
 
 	"github.com/mfesenko/sf-movie-locations/config"
 	"github.com/mfesenko/sf-movie-locations/datasf"
+	"github.com/mfesenko/sf-movie-locations/models"
 	"github.com/mfesenko/sf-movie-locations/persistence"
 )
 
@@ -33,7 +34,7 @@ func main() {
 	limit := config.Dataloader.BatchSize
 	offset := 0
 
-	movies := make([]persistence.Movie, 0)
+	movies := make([]models.Movie, 0)
 	recordsCount := 0
 	continueRetrieve := true
 	for continueRetrieve {

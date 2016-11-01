@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mfesenko/sf-movie-locations/config"
+	"github.com/mfesenko/sf-movie-locations/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -40,12 +41,12 @@ func (ds DataStore) collection(session *mgo.Session) *mgo.Collection {
 	return session.DB(ds.dbName).C(ds.collectionName)
 }
 
-func (ds DataStore) FindMovies(title string, fields ...string) []Movie {
+func (ds DataStore) FindMovies(title string, fields ...string) []models.Movie {
 	session := ds.getSession()
 	defer session.Close()
 	query := ds.createTitleQuery(title)
 	selector := ds.buildSelector(fields)
-	movies := make([]Movie, 0)
+	movies := make([]models.Movie, 0)
 	ds.collection(session).Find(query).Select(selector).All(&movies)
 	return movies
 }
@@ -66,7 +67,7 @@ func (ds DataStore) buildSelector(fields []string) bson.M {
 	return selector
 }
 
-func (ds DataStore) AddMovies(movies []Movie) {
+func (ds DataStore) AddMovies(movies []models.Movie) {
 	session := ds.getSession()
 	defer session.Close()
 
@@ -81,7 +82,7 @@ func (ds DataStore) AddMovies(movies []Movie) {
 	}
 }
 
-func (ds DataStore) AddMovie(movie Movie) {
+func (ds DataStore) AddMovie(movie models.Movie) {
 	session := ds.getSession()
 	defer session.Close()
 	err := ds.collection(session).Insert(movie)

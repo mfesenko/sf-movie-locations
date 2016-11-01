@@ -7,7 +7,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/mfesenko/sf-movie-locations/persistence"
+	"github.com/mfesenko/sf-movie-locations/models"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -19,8 +19,8 @@ func NewNormalizer(geocodingService *GeocodingService) *Normalizer {
 	return &Normalizer{geocodingService}
 }
 
-func (n Normalizer) Normalize(records []DataSFRecord) ([]persistence.Movie, error) {
-	moviesMap := make(map[string]*persistence.Movie)
+func (n Normalizer) Normalize(records []DataSFRecord) ([]models.Movie, error) {
+	moviesMap := make(map[string]*models.Movie)
 	var resultError error = nil
 	for _, record := range records {
 		if record.Locations == "" {
@@ -38,13 +38,13 @@ func (n Normalizer) Normalize(records []DataSFRecord) ([]persistence.Movie, erro
 			}
 		} else {
 			if movie == nil {
-				movie = &persistence.Movie{
+				movie = &models.Movie{
 					Id:        bson.NewObjectId(),
 					Title:     record.Title,
 					Year:      record.Release_year,
 					Actors:    buildNotEmptySlice(record.Actor_1, record.Actor_2, record.Actor_3),
 					Director:  record.Director,
-					Locations: make([]persistence.Location, 0),
+					Locations: make([]models.Location, 0),
 				}
 				moviesMap[movieKey] = movie
 			}
@@ -52,7 +52,7 @@ func (n Normalizer) Normalize(records []DataSFRecord) ([]persistence.Movie, erro
 			movie.Locations = append(movie.Locations, location)
 		}
 	}
-	moviesList := make([]persistence.Movie, len(moviesMap))
+	moviesList := make([]models.Movie, len(moviesMap))
 	index := 0
 	for _, movie := range moviesMap {
 		moviesList[index] = *movie

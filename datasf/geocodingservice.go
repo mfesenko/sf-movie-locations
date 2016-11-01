@@ -3,14 +3,14 @@ package datasf
 import (
 	"fmt"
 
-	"github.com/mfesenko/sf-movie-locations/persistence"
+	"github.com/mfesenko/sf-movie-locations/models"
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
 )
 
 type GeocodingService struct {
 	client           *maps.Client
-	coordinatesCache map[string]persistence.Location
+	coordinatesCache map[string]models.Location
 }
 
 func NewGeocodingService(apiKey string) (*GeocodingService, error) {
@@ -20,24 +20,24 @@ func NewGeocodingService(apiKey string) (*GeocodingService, error) {
 	}
 	return &GeocodingService{
 		client:           client,
-		coordinatesCache: make(map[string]persistence.Location),
+		coordinatesCache: make(map[string]models.Location),
 	}, nil
 }
 
-func (gs *GeocodingService) ConvertAddressToCoordinates(address string) (persistence.Location, error) {
+func (gs *GeocodingService) ConvertAddressToCoordinates(address string) (models.Location, error) {
 	coordinates, ok := gs.coordinatesCache[address]
 	if ok == false {
 		var err error
 		coordinates, err = gs.requestCoordinates(address)
 		if err != nil {
-			return persistence.Location{}, err
+			return models.Location{}, err
 		}
 		gs.coordinatesCache[address] = coordinates
 	}
 	return coordinates, nil
 }
 
-func (gs GeocodingService) requestCoordinates(address string) (persistence.Location, error) {
+func (gs GeocodingService) requestCoordinates(address string) (models.Location, error) {
 	placeId, err := gs.getPlaceId(address)
 	var response []maps.GeocodingResult
 	if err != nil {
@@ -48,11 +48,11 @@ func (gs GeocodingService) requestCoordinates(address string) (persistence.Locat
 	}
 
 	if err != nil {
-		return persistence.Location{},
+		return models.Location{},
 			fmt.Errorf("Failed to get geo coordinates for address '%s' with error: %s", address, err)
 	}
 	location := response[0].Geometry.Location
-	return persistence.Location{
+	return models.Location{
 		Latitude:  location.Lat,
 		Longitude: location.Lng,
 	}, nil

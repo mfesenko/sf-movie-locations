@@ -5,6 +5,7 @@ import (
 
 	"github.com/facebookgo/mgotest"
 	"github.com/mfesenko/sf-movie-locations/config"
+	"github.com/mfesenko/sf-movie-locations/models"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -15,7 +16,7 @@ const testCollectionName = "testcollection"
 
 type GetMoviesTest struct {
 	title          string
-	expectedMovies []Movie
+	expectedMovies []models.Movie
 }
 
 func TestNewDataStoreFailure(t *testing.T) {
@@ -42,15 +43,15 @@ func TestDataStore_FindMovies(t *testing.T) {
 }
 
 func TestDataStore_FindMoviesWithTitleOnly(t *testing.T) {
-	testFindMovies(t, func(movie Movie) Movie {
-		return Movie{
+	testFindMovies(t, func(movie models.Movie) models.Movie {
+		return models.Movie{
 			Id:    movie.Id,
 			Title: movie.Title,
 		}
 	}, "title")
 }
 
-func testFindMovies(t *testing.T, transformer func(Movie) Movie, fields ...string) {
+func testFindMovies(t *testing.T, transformer func(models.Movie) models.Movie, fields ...string) {
 	mongo := mgotest.NewStartedServer(t)
 	defer mongo.Stop()
 
@@ -58,18 +59,18 @@ func testFindMovies(t *testing.T, transformer func(Movie) Movie, fields ...strin
 	assert := assert.New(t)
 	datastore := createDataStore(mongo, assert)
 
-	var expectedMovies []Movie
+	var expectedMovies []models.Movie
 	if transformer == nil {
 		expectedMovies = movies
 	} else {
-		expectedMovies = make([]Movie, len(movies))
+		expectedMovies = make([]models.Movie, len(movies))
 		for index, movie := range movies {
 			expectedMovies[index] = transformer(movie)
 		}
 	}
 
 	var tests = []GetMoviesTest{
-		{"test", []Movie{}},
+		{"test", []models.Movie{}},
 		{"wonDer", expectedMovies[1:2]},
 		{"Woman", expectedMovies},
 		{"", expectedMovies},
@@ -142,7 +143,7 @@ func createDataStore(mongo *mgotest.Server, assert *assert.Assertions) *DataStor
 	return datastore
 }
 
-func initDbCollection(mongo *mgotest.Server) []Movie {
+func initDbCollection(mongo *mgotest.Server) []models.Movie {
 	session := mongo.Session().Copy()
 	defer session.Close()
 	movies := getTestMovies()
@@ -152,15 +153,15 @@ func initDbCollection(mongo *mgotest.Server) []Movie {
 	return movies
 }
 
-func getTestMovies() []Movie {
-	return []Movie{
+func getTestMovies() []models.Movie {
+	return []models.Movie{
 		{
 			Id:       bson.NewObjectId(),
 			Title:    "Pretty woman",
 			Year:     "1990",
 			Director: "Garry Marshall",
 			Actors:   []string{"Richard Gere", "Julia Roberts", "Jason Alexander"},
-			Locations: []Location{
+			Locations: []models.Location{
 				{
 					Latitude:    22,
 					Longitude:   45,
@@ -174,7 +175,7 @@ func getTestMovies() []Movie {
 			Year:     "2017",
 			Director: "Patty Jenkins",
 			Actors:   []string{"Gal Gadot", "Chris Pine", "Robin Wright"},
-			Locations: []Location{
+			Locations: []models.Location{
 				{
 					Latitude:    122,
 					Longitude:   145,
@@ -185,8 +186,8 @@ func getTestMovies() []Movie {
 	}
 }
 
-func validateEntities(session *mgo.Session, assert *assert.Assertions, expectedMovies ...Movie) {
-	var movies []Movie
+func validateEntities(session *mgo.Session, assert *assert.Assertions, expectedMovies ...models.Movie) {
+	var movies []models.Movie
 	err := session.DB(testDbName).C(testCollectionName).Find(bson.M{}).All(&movies)
 	assert.Nil(err)
 	assert.Equal(expectedMovies, movies)
