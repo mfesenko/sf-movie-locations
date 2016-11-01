@@ -1,0 +1,14 @@
+[dataloader]
+batchSize = 100
+
+[server]
+port = 8080
+staticContentPath = "static"
+
+[db]
+host = "localhost"
+dbName = "db-name"
+collectionName = "collection-name"
+username = "username"
+password = "pwd"
+timeout = 30
