@@ -40,17 +40,30 @@ func (ds DataStore) collection(session *mgo.Session) *mgo.Collection {
 	return session.DB(ds.dbName).C(ds.collectionName)
 }
 
-func (ds DataStore) GetMovies(title string) []Movie {
+func (ds DataStore) FindMovies(title string, fields ...string) []Movie {
 	session := ds.getSession()
 	defer session.Close()
-
-	var movies []Movie
-	query := bson.M{}
-	if title != "" {
-		query = ds.createTitleQuery(title)
-	}
-	ds.collection(session).Find(query).All(&movies)
+	query := ds.createTitleQuery(title)
+	selector := ds.buildSelector(fields)
+	movies := make([]Movie, 0)
+	ds.collection(session).Find(query).Select(selector).All(&movies)
 	return movies
+}
+
+func (ds DataStore) createTitleQuery(title string) bson.M {
+	return bson.M{
+		"title": bson.RegEx{title, "i"},
+	}
+}
+
+func (ds DataStore) buildSelector(fields []string) bson.M {
+	selector := bson.M{}
+	if fields != nil {
+		for _, field := range fields {
+			selector[field] = 1
+		}
+	}
+	return selector
 }
 
 func (ds DataStore) AddMovies(movies []Movie) {
@@ -84,23 +97,4 @@ func (ds DataStore) Reset() {
 	ds.collection(session).DropCollection()
 	index := mgo.Index{Key: []string{"title"}}
 	ds.collection(session).EnsureIndex(index)
-}
-
-func (ds DataStore) FindMovies(title string) []Movie {
-	session := ds.getSession()
-	defer session.Close()
-
-	query := ds.createTitleQuery(title)
-	selector := bson.M{
-		"title": 1,
-	}
-	movies := make([]Movie, 0)
-	ds.collection(session).Find(query).Select(selector).All(&movies)
-	return movies
-}
-
-func (ds DataStore) createTitleQuery(title string) bson.M {
-	return bson.M{
-		"title": bson.RegEx{title, "i"},
-	}
 }
