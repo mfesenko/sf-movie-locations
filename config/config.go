@@ -29,6 +29,7 @@ type ServerConfig struct {
 }
 
 type DataloaderConfig struct {
+	BaseUrl   string
 	BatchSize int
 }
 

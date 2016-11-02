@@ -3,9 +3,6 @@ package datasf
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/mfesenko/sf-movie-locations/models"
@@ -17,7 +14,6 @@ type MockedGeocodingService struct {
 	mock.Mock
 }
 
-const testDataDir = "testdata/"
 const validAddress = "valid address, San Francisco, CA"
 const queryLimitAddress = "query limit address, San Francisco, CA"
 
@@ -117,13 +113,4 @@ func getExpectedMovies(assert *assert.Assertions, fileName string) []models.Movi
 	var movies []models.Movie
 	json.Unmarshal(data, &movies)
 	return movies
-}
-
-func readTestDataFile(assert *assert.Assertions, fileName string) []byte {
-	filePath := testDataDir + fileName
-	_, err := os.Stat(filePath)
-	assert.Nil(err, fmt.Errorf("Test data file '%s' doesn't exist", filePath))
-	data, err := ioutil.ReadFile(filePath)
-	assert.Nil(err, fmt.Errorf("Failed to read test data file '%s', error: %s", filePath, err))
-	return data
 }

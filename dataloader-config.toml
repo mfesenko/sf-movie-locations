@@ -1,4 +1,5 @@
 [dataloader]
+baseUrl = "https://data.sfgov.org/resource/wwmu-gmzc.json"
 batchSize = 1000
 
 [db]

@@ -28,7 +28,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dataSFService := datasf.NewDataSFService()
+	dataSFService, err := datasf.NewDataSFService(config.Dataloader.BaseUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
 	normalizer, err := datasf.NewNormalizer(geocodingService)
 	if err != nil {
 		log.Fatal(err)
