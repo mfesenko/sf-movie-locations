@@ -2,9 +2,10 @@ package datasf
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/mfesenko/sf-movie-locations/models"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewGeocodingServiceWithEmptyApiKey(t *testing.T) {
@@ -17,7 +18,8 @@ func TestNewGeocodingServiceWithEmptyApiKey(t *testing.T) {
 func TestNewGeocodingService(t *testing.T) {
 	assert := assert.New(t)
 	service := createGeocodingService(assert)
-	assert.NotNil(service.client)
+	googleService := service.(*googleGeocodingService)
+	assert.NotNil(googleService.client)
 }
 
 func TestGeocodingService_ConvertAddressToCoordinatesForPlace(t *testing.T) {
@@ -33,12 +35,12 @@ func TestGeocodingService_ConvertAddressToCoordinatesForPlace(t *testing.T) {
 	location, err := service.ConvertAddressToCoordinates(address)
 	assert.Nil(err)
 	assert.Equal(expectedLocation, location)
-	assert.Equal(1, len(service.coordinatesCache))
+	assert.Equal(1, getCacheSize(service))
 
 	location, err = service.ConvertAddressToCoordinates(address)
 	assert.Nil(err)
 	assert.Equal(expectedLocation, location)
-	assert.Equal(1, len(service.coordinatesCache))
+	assert.Equal(1, getCacheSize(service))
 }
 
 func TestGeocodingService_ConvertAddressToCoordinatesForAddress(t *testing.T) {
@@ -53,7 +55,7 @@ func TestGeocodingService_ConvertAddressToCoordinatesForAddress(t *testing.T) {
 	location, err := service.ConvertAddressToCoordinates(address)
 	assert.Nil(err)
 	assert.Equal(expectedLocation, location)
-	assert.Equal(1, len(service.coordinatesCache))
+	assert.Equal(1, getCacheSize(service))
 }
 
 func TestGeocodingService_ConvertAddressToCoordinatesForInvalidAddress(t *testing.T) {
@@ -68,12 +70,17 @@ func TestGeocodingService_ConvertAddressToCoordinatesForInvalidAddress(t *testin
 	location, err := service.ConvertAddressToCoordinates(address)
 	assert.EqualError(err, expectedErrorMessage)
 	assert.Equal(expectedLocation, location)
-	assert.Equal(0, len(service.coordinatesCache))
+	assert.Equal(0, getCacheSize(service))
 }
 
-func createGeocodingService(assert *assert.Assertions) *GeocodingService {
+func createGeocodingService(assert *assert.Assertions) GeocodingService {
 	service, err := NewGeocodingService("AIzaSyBDII7q46NRV97keR-R14tbS_N7xgsLzE8")
 	assert.NotNil(service)
 	assert.Nil(err)
 	return service
+}
+
+func getCacheSize(service GeocodingService) int {
+	googleService := service.(*googleGeocodingService)
+	return len(googleService.coordinatesCache)
 }

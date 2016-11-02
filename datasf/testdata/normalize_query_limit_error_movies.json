@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Serendipity",
+    "year": "2001",
+    "director": "Peter Chelsom",
+    "actors": [
+      "John Cusack",
+      "Kate Beckinsale"
+    ],
+    "locations": [
+      {
+        "lat": 37.15,
+        "lng": -122.56,
+        "description": "valid address"
+      }
+    ]
+  }
+]

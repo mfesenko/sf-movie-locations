@@ -12,11 +12,14 @@ import (
 )
 
 type Normalizer struct {
-	geocodingService *GeocodingService
+	geocodingService GeocodingService
 }
 
-func NewNormalizer(geocodingService *GeocodingService) *Normalizer {
-	return &Normalizer{geocodingService}
+func NewNormalizer(geocodingService GeocodingService) (*Normalizer, error) {
+	if geocodingService == nil {
+		return nil, errors.New("Geocoding service is required")
+	}
+	return &Normalizer{geocodingService}, nil
 }
 
 func (n Normalizer) Normalize(records []DataSFRecord) ([]models.Movie, error) {

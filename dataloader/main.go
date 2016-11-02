@@ -29,7 +29,10 @@ func main() {
 		log.Fatal(err)
 	}
 	dataSFService := datasf.NewDataSFService()
-	normalizer := datasf.NewNormalizer(geocodingService)
+	normalizer, err := datasf.NewNormalizer(geocodingService)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	limit := config.Dataloader.BatchSize
 	offset := 0

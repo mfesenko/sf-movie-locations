@@ -1,0 +1,19 @@
+[
+  {
+    "title": "Big Eyes",
+    "year": "2014",
+    "director": "Tim Burton",
+    "actors": [
+      "Amy Adams",
+      "Krysten Ritter",
+      "Christoph Waltz"
+    ],
+    "locations": [
+      {
+        "lat": 37.15,
+        "lng": -122.56,
+        "description": "valid address"
+      }
+    ]
+  }
+]
