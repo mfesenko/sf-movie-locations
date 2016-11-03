@@ -129,17 +129,17 @@ For example, to run tests for package **config**:
  
 ## TODO
 There's always a room for improvements :) So here's the list of future improvements for this project:
-1. Backend
-* improve logging and error handling
-* complete tests for all modules
-* run MongoDB in a docker container
-* convertation of location from original dataset to geographical coordinates is failing for some records
-* currently dataloader is always re-creating database from scratch, some sort of incremental fetch can be implemented
-2. Frontend
-* fix issues with UI on mobile browsers an IE and do more testing on various environments
-* think about grouping points on a map when there's a lot of them in some area and split them when user zooms in
-* don't load all locations with one request, load them partially
-3. General
-* integrate with some other datasource to retrieve more information about movie, f.e. plot description, poster of the movie
-* locations filtering not only by movie name
-* currently dataloader is scheduled for execution in crontab once a week, can make it configurable option and control it from code  
+* **Backend**
+ * improve logging and error handling
+ * complete tests for all modules
+ * run MongoDB in a docker container
+ * convertation of location from original dataset to geographical coordinates is failing for some records
+ * currently dataloader is always re-creating database from scratch, some sort of incremental fetch can be implemented
+* **Frontend**
+ * fix issues with UI on mobile browsers an IE and do more testing on various environments
+ * think about grouping points on a map when there's a lot of them in some area and split them when user zooms in
+ * don't load all locations with one request, load them partially
+* **General**
+ * integrate with some other datasource to retrieve more information about movie, f.e. plot description, poster of the movie
+ * locations filtering not only by movie name
+ * currently dataloader is scheduled for execution in crontab once a week, can make it configurable option and control it from code  
