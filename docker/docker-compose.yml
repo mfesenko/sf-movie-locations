@@ -1,0 +1,20 @@
+version: '2'
+services:
+  webapp:
+    build: .
+    network_mode: 'host'
+    working_dir: /go/src/github.com/mfesenko/sf-movie-locations
+    command:  bash -c 'govendor init && govendor fetch +out && go run webapp/main.go'
+    volumes:
+      - ..:/go/src/github.com/mfesenko/sf-movie-locations
+    ports:
+      - 2222:2222
+  dataloader:
+    build: .
+    network_mode: 'host'
+    environment:
+      - 'GOOGLE_MAPS_API_KEY=AIzaSyDfoERyFuux9rif4hWmtjLv1hlkJVV3R6s'
+    working_dir: /go/src/github.com/mfesenko/sf-movie-locations
+    command: bash -c 'govendor init && govendor fetch +out && go run dataloader/main.go'
+    volumes:
+      - ..:/go/src/github.com/mfesenko/sf-movie-locations
