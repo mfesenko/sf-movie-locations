@@ -44,12 +44,15 @@
             </div>
             <div class="movies-table">
                 <table class="table">
-                    <tr>
-                        <th>Title</th>
-                        <th>Year</th>
-                        <th>Director</th>
-                        <th>Starring</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>Director</th>
+                            <th>Starring</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     {{each(index, movie) movies}}
                     <tr>
                         <td>${movie.title}</td>
@@ -57,13 +60,14 @@
                         <td>${movie.director}</td>
                         <td>
                             {{if typeof(movie.actors) == 'undefined'}}
-                                n/a
+                            n/a
                             {{else}}
-                                ${joinWithComma(movie.actors)}
+                            ${joinWithComma(movie.actors)}
                             {{/if}}
                         </td>
                     </tr>
                     {{/each}}
+                    </tbody>
                 </table>
             </div>
         </div>
