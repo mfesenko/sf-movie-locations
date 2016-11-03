@@ -110,7 +110,7 @@ There's sample script for creation of default users which can be executed like t
 $ mongo < db/createusers.js
 ```
  
-# Testing
+## Testing
 To execute tests you will need Go installed. Currently not all packages are completely covered with tests, but it will be fixed in the nearest future. 
 For example, to run tests for package **config**:
  ```
@@ -132,3 +132,4 @@ There's always a room for improvements :) So here's the list of future improveme
 3. General
 * integrate with some other datasource to retrieve more information about movies
 * locations filtering not only by movie name
+* currently dataloader is scheduled for execution in crontab once a week, can make it configurable option and control it from code  
