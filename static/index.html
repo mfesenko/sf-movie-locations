@@ -17,7 +17,7 @@
     <script src="/static/js/customwindow.js"></script>
     <script src="/static/js/main.js"></script>
 
-    <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyBH0AVIkMM94u3hMMUPjwbjerg9P-AxciQ&callback=initMap"></script>
+    <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyBH0AVIkMM94u3hMMUPjwbjerg9P-AxciQ&callback=SfMovies.initMap"></script>
 </head>
 <body>
 <div class="main">
@@ -62,7 +62,7 @@
                             {{if typeof(movie.actors) == 'undefined'}}
                             n/a
                             {{else}}
-                            ${joinWithComma(movie.actors)}
+                            ${SfMovies.joinWithComma(movie.actors)}
                             {{/if}}
                         </td>
                     </tr>
