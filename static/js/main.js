@@ -22,8 +22,9 @@ function initMap() {
 function initEventHandlers() {
     initAutocomplete();
     $('#filter').click(filter);
-    $('#movie').keyup(function (e) {
-        if (e.keyCode === 13) {
+    $('#movie').keyup(function (event) {
+        var keyCode = event.keyCode ? event.keyCode : event.which;
+        if (13 === keyCode) {
             filter();
         }
     })
@@ -52,37 +53,39 @@ function initAutocomplete() {
 
 function onMovieLocationsLoaded(data) {
     infowindow.close();
+    resetMarkers();
+    data && data.forEach(createMarkersForMovie);
+}
+
+function resetMarkers() {
     markers.forEach(hideMarker);
     markers = [];
     locationToMovies = [];
-    if (data != null) {
-        data.forEach(createMarkersForMovie);
-    }
 }
 
 function createMarkersForMovie(movie) {
-    if (movie.locations) {
-        movie.locations.forEach(function (location) {
-            var locationMovies = locationToMovies[location.description];
-            if (typeof(locationMovies) == 'undefined') {
-                locationMovies = [movie];
-                locationToMovies[location.description] = locationMovies;
+    if (!movie.locations) return;
 
-                var marker = createMarker(location);
-                marker.addListener('click', function () {
-                    var msgData = {
-                        movies: locationToMovies[location.description],
-                        location: location
-                    }
-                    infowindow.setContent(getInfoMessageForMovie(msgData));
-                    infowindow.open(map, marker);
-                });
-                markers.push(marker)
-            } else {
-                locationMovies.push(movie);
-            }
-        });
-    }
+    movie.locations.forEach(function (location) {
+        var locationMovies = locationToMovies[location.description];
+
+        if (locationMovies) {
+            locationMovies.push(movie);
+        } else {
+            locationToMovies[location.description] = [movie];
+
+            var marker = createMarker(location);
+            marker.addListener('click', function () {
+                var msgData = {
+                    movies: locationToMovies[location.description],
+                    location: location
+                };
+                infowindow.setContent(getInfoMessageForMovie(msgData));
+                infowindow.open(map, marker);
+            });
+            markers.push(marker)
+        }
+    });
 }
 
 function createMarker(location) {
